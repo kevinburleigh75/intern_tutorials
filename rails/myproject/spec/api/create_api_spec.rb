@@ -25,7 +25,7 @@ RSpec.describe '/create API endpoint', type: :request do
         ]
       }
       response_status, response_body = create_request(request_payload: payload)
-      expect(response_body.num_created).to eq(4)
+      expect(response_body[:num_created]).to eq(4)
     end
   end
 end
@@ -38,7 +38,7 @@ def create_request(request_payload:)
   )
 
   response_status = response.status
-  response_body   = JSON.parse(response.body)
+  response_body   = JSON.parse(response.body, symbolize_names: true)
 
   [response_status, response_body]
 end
