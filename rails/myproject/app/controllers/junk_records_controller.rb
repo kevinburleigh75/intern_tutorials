@@ -1,0 +1,2 @@
+class JunkRecordsController < ApplicationController
+end
