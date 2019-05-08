@@ -11,8 +11,21 @@ RSpec.describe '/create API endpoint', type: :request do
           'Debbie',
         ]
       }
-      response_status, response_body = create_request(request_payload: {})
+      response_status, response_body = create_request(request_payload: payload)
       expect(response_status).to eq(200)
+    end
+
+    it 'returns the number of created records' do
+      payload = {
+        names: [
+          'Alice',
+          'Bob',
+          'Charlie',
+          'Debbie',
+        ]
+      }
+      response_status, response_body = create_request(request_payload: payload)
+      expect(response_body.num_created).to eq(4)
     end
   end
 end
