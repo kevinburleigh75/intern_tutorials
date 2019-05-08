@@ -1,5 +1,8 @@
 class JunkRecordsController < ApplicationController
   def create
-    render json: {num_created: 4}, status: 200
+    params['names'].each do |name|
+      JunkRecord.create!(name: name)
+    end
+    render json: {num_created: params['names'].size}, status: 200
   end
 end
