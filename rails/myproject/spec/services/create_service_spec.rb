@@ -5,33 +5,34 @@ RSpec.describe CreateService, :truncation do
     it 'no JunkRecords are created' do
       expect{CreateService.new.process({names: []})}.to_not change{JunkRecord.count}
     end
-    it 'returns num_created == 0' do
+    it 'num_created == 0' do
       expect(CreateService.new.process({names: []})).to eq({num_created: 0})
     end
   end
 
-  context 'when previously-unseen names are given' do
-    it 'creates one JunkRecord for each given name' do
-      expect{CreateService.new.process({names: ['Alice', 'Bob']})}.to change{JunkRecord.count}.by(2)
-    end
-    it 'sets num_created equal to the number of created JunkRecords' do
-      expect(CreateService.new.process({names: ['Alice', 'Bob']})).to eq({num_created: 2})
-    end
-  end
+  context 'when names are given' do
+    let(:all_names)               { ['Alice', 'Bob', 'Cindy', 'Daniel', 'Esther', 'Fred'] }
+    let(:previously_seen_names)   { all_names.values_at(1,2,5) }
+    let(:previously_unseen_names) { all_names - previously_seen_names }
 
-  context 'when previously-seen names are given' do
-    let!(:previously_seen_records) {
-      [
-        create(:junk_record, name: 'Alice'),
-        create(:junk_record, name: 'Bob')
-      ]
+    let!(:old_previously_seen_records) {
+      previously_seen_names.map do |name|
+        create(:junk_record, name: name)
+      end
     }
 
-    it 'does not create JunkRecords' do
-      expect{CreateService.new.process({names: ['Alice', 'Bob']})}.to change{JunkRecord.count}.by(0)
+    let(:payload) { { names: all_names } }
+
+    it 'one JunkRecord per previously-unseen name is created' do
+      expect{CreateService.new.process(payload)}.to change{JunkRecord.count}.by(previously_unseen_names.count)
     end
-    it 'returns num_created == 0' do
-      expect(CreateService.new.process({names: ['Alice', 'Bob']})).to eq({num_created: 0})
+    it 'JunkRecords for previously-seen names are unchanged' do
+      CreateService.new.process(payload)
+      new_previously_seen_records = JunkRecord.where(name: previously_seen_names).order(:name)
+      expect(new_previously_seen_records).to match_array(old_previously_seen_records)
+    end
+    it 'num_created is set to the number of created JunkRecords' do
+      expect(CreateService.new.process(payload)).to eq({num_created: previously_unseen_names.count})
     end
   end
 end
