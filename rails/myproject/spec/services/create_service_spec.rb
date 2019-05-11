@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CreateService do
+RSpec.describe CreateService, :truncation do
   context 'when no names are given' do
     it 'no JunkRecords are created' do
       expect{CreateService.new.process({names: []})}.to_not change{JunkRecord.count}
