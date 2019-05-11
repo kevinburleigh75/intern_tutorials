@@ -1,23 +1,38 @@
 require 'rails_helper'
 
 RSpec.describe '/create API endpoint', type: :request do
+  let(:service_instance_double) {
+    instance_double(CreateService).tap do |dbl|
+      allow(dbl).to receive(:process).with(given_request_payload).and_return(target_response_payload)
+    end
+  }
+
+  before(:each) do
+    allow(CreateService).to receive(:new).and_return(service_instance_double)
+  end
+
   context 'when sent valid input' do
-    let(:payload) {
-      { names: ['Alice','Bob','Charlie','Debbie'] }
+    let(:given_request_payload) {
+      { names: ['Alice','Bob','Charlie','Debbie', nested: {foo: 'bar'}] }
     }
 
-    it 'returns status 200 (success)' do
-      response_status, response_body = create_request(request_payload: payload)
+    let(:target_response_payload) {
+      { num_created: 4, nested: {foo: 'bar'} }
+    }
+
+    it 'the CreateService service is called with the given request payload' do
+      response_status, response_body = create_request(request_payload: given_request_payload)
+      expect(service_instance_double).to have_received(:process).with(given_request_payload)
+    end
+
+    it 'the result of the CreateService service call is returned in the response payload' do
+      response_status, response_body = create_request(request_payload: given_request_payload)
+      expect(response_body).to eq(target_response_payload)
+    end
+
+    it 'the response status is 200 (success)' do
+      response_status, response_body = create_request(request_payload: given_request_payload)
       expect(response_status).to eq(200)
-    end
-
-    it 'creates the appropriate number of records' do
-      expect{create_request(request_payload: payload)}.to change{JunkRecord.count}.by(4)
-    end
-
-    it 'returns the number of created records' do
-      response_status, response_body = create_request(request_payload: payload)
-      expect(response_body[:num_created]).to eq(4)
     end
   end
 end
