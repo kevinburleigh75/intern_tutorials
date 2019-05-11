@@ -1,5 +1,8 @@
 class CreateService
   def process(payload)
-    { num_created: 0 }
+    payload[:names].each do |name|
+      JunkRecord.create!(name: name)
+    end
+    { num_created: payload[:names].count }
   end
 end
