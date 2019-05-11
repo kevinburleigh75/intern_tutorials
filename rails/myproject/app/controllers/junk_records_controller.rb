@@ -1,8 +1,6 @@
 class JunkRecordsController < ApplicationController
   def create
-    params['names'].each do |name|
-      JunkRecord.create!(name: name)
-    end
-    render json: {num_created: params['names'].size}, status: 200
+    response_payload = CreateService.new.process(request.request_parameters.deep_symbolize_keys)
+    render json: response_payload, status: 200
   end
 end
