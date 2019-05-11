@@ -1,0 +1,26 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  RootBucketName:
+    Type: String
+    Description: 'Name of the S3 bucket to create for deployment templates, etc.'
+    ConstraintDescription: 'Must be a valid, globally-unique S3 bucket name.'
+    AllowedPattern: '^[a-z0-9][-.a-z0-9]{1,61}[a-z0-9]$'
+
+Resources:
+  RootTemplateBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName:    !Ref RootBucketName
+      AccessControl: PublicRead
+
+Outputs:
+  RootBucketNameOutput:
+    Description: 'Name of the root bucket for deployment templates, etc.'
+    Value: !Ref RootBucketName
+    Export:
+      Name:
+        !Join
+          - '-'
+          - - !Ref 'AWS::StackName'
+            - RootBucketName
