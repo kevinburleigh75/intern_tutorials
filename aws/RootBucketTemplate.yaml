@@ -11,8 +11,7 @@ Resources:
   RootTemplateBucket:
     Type: 'AWS::S3::Bucket'
     Properties:
-      BucketName:    !Ref RootBucketName
-      AccessControl: PublicRead
+      BucketName: !Ref RootBucketName
 
 Outputs:
   RootBucketNameOutput:
