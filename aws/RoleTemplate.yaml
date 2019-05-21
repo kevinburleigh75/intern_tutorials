@@ -94,3 +94,17 @@ Resources:
             Action:
               - sts:AssumeRole
             Resource: !GetAtt Ec2InstanceRole.Arn
+
+Outputs:
+
+  Ec2InstanceRoleOutput:
+    Description: 'The role for EC2 AutoScaling groups instances.'
+    Value: !Ref Ec2InstanceRole
+    Export:
+      Name: !Sub ${AWS::StackName}-Ec2InstanceRole
+
+  Ec2InstanceRoleInstanceProfileArnOutput:
+    Description: 'The InstanceProfileArn for Ec2InstanceRole.'
+    Value: !GetAtt Ec2InstanceRoleInstanceProfile.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-Ec2InstanceRoleInstanceProfileArn
