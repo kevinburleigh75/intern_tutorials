@@ -26,6 +26,7 @@ Resources:
 
       ## The AssumeRolePolicyDocument describes
       ## who (or what) can take on this role.
+      ## These are the "trust policies".
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -46,13 +47,15 @@ Resources:
               - sts:AssumeRole
 
       ## The list of AWS-managed policies
-      ## attached to this role.
+      ## attached to this role.  These are managed
+      ## actions that this role allows.
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AutoScalingFullAccess
         - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
 
       ## A list if inline policies attached
-      ## directly to this role.
+      ## directly to this role.  These are custom
+      ## actions that this role allows.
       Policies:
         - PolicyName: 'AllowEc2InstanceTagModificationPolicy'
           PolicyDocument:
