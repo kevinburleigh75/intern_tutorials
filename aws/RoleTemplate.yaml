@@ -70,6 +70,15 @@ Resources:
                   - 'ec2:CreateTags'
                 Resource: 'arn:aws:ec2:*:*:instance/*'
 
+  ## Create an instance profile so that EC2 instances
+  ## can assume the Ec2InstanceRole role.
+  Ec2InstanceRoleInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: !Sub ${AWS::StackName}-Ec2InstanceRoleProfile-${AWS::Region}
+      Roles:
+        - !Ref Ec2InstanceRole
+
   ## Attach a policy to our user group that gives it
   ## the power to assume the Ec2InstanceRole.
   AllowDevsToAssumeEc2InstanceRolePolicy:
